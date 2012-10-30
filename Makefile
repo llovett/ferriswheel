@@ -5,8 +5,8 @@ APPS = ferriswheel
 
 all: $(APPS)
 
-2dcube: 2dcube.cpp matrix.cpp
-	g++ $(FLAGS) $(LIBS) ferriswheel.cpp -o $(APPS)
+ferriswheel: ferriswheel.cpp ferriswheel.h
+	g++ ferriswheel.cpp -o $(APPS) $(FLAGS) $(LIBS)
 
 clean:
 	@rm -rf $(APPS)
