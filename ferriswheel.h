@@ -12,3 +12,7 @@ typedef struct {
     GLfloat diffuse[4];
     GLfloat specular[4];
 } lProps;
+
+/* function declarations */
+void look(int id);
+

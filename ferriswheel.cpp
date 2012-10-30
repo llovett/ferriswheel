@@ -14,7 +14,9 @@
 #include "ferriswheel.h"
 
 /* constants */
+#define PI 3.1415926535
 #define WHEEL_SIZE 10.0f
+#define WHEEL_DEPTH 2.0f
 #define BASE_SIZE 5.0f
 
 /* global variables */
@@ -44,7 +46,6 @@ mProps redPlasticMaterials = {
     32.0
 };
 
-
 lProps whiteLighting = {
     {0.0, 0.0, 0.0, 1.0},
     {1.0, 1.0, 1.0, 1.0},
@@ -68,13 +69,26 @@ GLUquadricObj *p, *q;
 int main_window;
 
 void init() {
+    /* setup some globals */
+    EyeX = EyeY = 10.0f;
+    EyeZ = 30.0f;
+    
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glColor3f(0.0, 0.0, 0.0);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    gluLookAt(5.0, 10.0, 40.0, 0.0, 10.0, 0.0, 0.0,  1.0, 0.0);
+    look(0);
 }
 
+void look(int id) {
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    // gluLookAt(5.0, 10.0, 40.0,
+    // 	      0.0, 10.0, 0.0,
+    // 	      0.0, 1.0, 0.0);
+    gluLookAt(EyeX, EyeY, EyeZ,
+	      LookAtX, LookAtY, LookAtZ,
+	      0.0, 1.0, 0.0);
+
+}    
 
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
@@ -87,6 +101,7 @@ void reshape(int w, int h) {
     glutSetWindow(main_window);
     glutPostWindowRedisplay(main_window);  
 }
+
 
 void torso() {
     glPushMatrix();
@@ -159,60 +174,72 @@ void left_lower_leg() {
 void display() {
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
 
-    /* torso */
-    glRotatef(theta[0], 0.0, 1.0, 0.0);
-    torso();
+    glPushMatrix();
+    gluCylinder(p, WHEEL_SIZE, WHEEL_SIZE, WHEEL_DEPTH, 8, 8);
+    glPushMatrix();
+    glTranslatef(0.0, 0.0, WHEEL_DEPTH);
+    gluDisk(p, WHEEL_SIZE/2, WHEEL_SIZE, 8, 8);
+    glPopMatrix();
+
+    glPushMatrix();
+    glRotatef(180.0f, 0.0, 1.0, 0.0);
+    gluDisk(p, WHEEL_SIZE/2, WHEEL_SIZE, 8, 8);
+    glPopMatrix();
+    
+
+    // /* torso */
+    // glRotatef(theta[0], 0.0, 1.0, 0.0);
+    // torso();
  
-    /* head */
-    glPushMatrix();
-    glTranslatef(0.0, HEADX, 0.0);
-    glRotatef(theta[1], 1.0, 0.0, 0.0);
-    glRotatef(theta[2], 0.0, 1.0, 0.0);
-    glTranslatef(0.0, HEADY, 0.0);
-    head();
-    glPopMatrix();
+    // /* head */
+    // glPushMatrix();
+    // glTranslatef(0.0, HEADX, 0.0);
+    // glRotatef(theta[1], 1.0, 0.0, 0.0);
+    // glRotatef(theta[2], 0.0, 1.0, 0.0);
+    // glTranslatef(0.0, HEADY, 0.0);
+    // head();
+    // glPopMatrix();
   
-    /* right arm */
-    glPushMatrix();
-    glTranslatef(LUAX, LUAY, 0.0);
-    glRotatef(theta[3], 1.0, 0.0, 0.0);
-    right_upper_arm();
-    glTranslatef(0.0, LLAY, 0.0);
-    glRotatef(theta[4], 1.0, 0.0, 0.0);
-    right_lower_arm();
-    glPopMatrix();
+    // /* right arm */
+    // glPushMatrix();
+    // glTranslatef(LUAX, LUAY, 0.0);
+    // glRotatef(theta[3], 1.0, 0.0, 0.0);
+    // right_upper_arm();
+    // glTranslatef(0.0, LLAY, 0.0);
+    // glRotatef(theta[4], 1.0, 0.0, 0.0);
+    // right_lower_arm();
+    // glPopMatrix();
 
-    /* left arm */
-    glPushMatrix();
-    glTranslatef(RUAX, RUAY, 0.0);
-    glRotatef(theta[5], 1.0, 0.0, 0.0);
-    left_upper_arm();
-    glTranslatef(0.0, RLAY, 0.0);
-    glRotatef(theta[6], 1.0, 0.0, 0.0);
-    left_lower_arm();
-    glPopMatrix();
+    // /* left arm */
+    // glPushMatrix();
+    // glTranslatef(RUAX, RUAY, 0.0);
+    // glRotatef(theta[5], 1.0, 0.0, 0.0);
+    // left_upper_arm();
+    // glTranslatef(0.0, RLAY, 0.0);
+    // glRotatef(theta[6], 1.0, 0.0, 0.0);
+    // left_lower_arm();
+    // glPopMatrix();
 
-    /* right leg */
-    glPushMatrix();
-    glTranslatef(LULX, LULY, 0.0);
-    glRotatef(theta[7], 1.0, 0.0, 0.0);
-    right_upper_leg();
-    glTranslatef(0.0, LLLY, 0.0);
-    glRotatef(theta[8], 1.0, 0.0, 0.0);
-    right_lower_leg();
-    glPopMatrix();
+    // /* right leg */
+    // glPushMatrix();
+    // glTranslatef(LULX, LULY, 0.0);
+    // glRotatef(theta[7], 1.0, 0.0, 0.0);
+    // right_upper_leg();
+    // glTranslatef(0.0, LLLY, 0.0);
+    // glRotatef(theta[8], 1.0, 0.0, 0.0);
+    // right_lower_leg();
+    // glPopMatrix();
 
-    /* left leg */
-    glPushMatrix();
-    glTranslatef(RULX, RULY, 0.0);
-    glRotatef(theta[9], 1.0, 0.0, 0.0);
-    left_upper_leg();
-    glTranslatef(0.0, RLLY, 0.0);
-    glRotatef(theta[10], 1.0, 0.0, 0.0);
-    left_lower_leg();
-    glPopMatrix();
+    // /* left leg */
+    // glPushMatrix();
+    // glTranslatef(RULX, RULY, 0.0);
+    // glRotatef(theta[9], 1.0, 0.0, 0.0);
+    // left_upper_leg();
+    // glTranslatef(0.0, RLLY, 0.0);
+    // glRotatef(theta[10], 1.0, 0.0, 0.0);
+    // left_lower_leg();
+    // glPopMatrix();
 
     glPopMatrix();
     glutSwapBuffers(); 
@@ -223,7 +250,7 @@ int main(int argc, char **argv) {
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(650, 650);
     glutInitWindowPosition(50, 50);
-    main_window = glutCreateWindow("Robot");
+    main_window = glutCreateWindow("Ferris Wheel");
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
@@ -254,14 +281,14 @@ int main(int argc, char **argv) {
     GLUI_Rollout *eyePosRollout = new GLUI_Rollout(control_panel, "Camera Position", false);
     GLUI_Rollout *lookAtRollout = new GLUI_Rollout(control_panel, "Lookat Point", false);
 
-    GLUI_Spinner *epxSpin = new GLUI_Spinner(eyePosRollout, "Camera X", GLUI_SPINNER_FLOAT, &EyeX, 0, (GLUI_Update_CB)NULL);
-    GLUI_Spinner *epySpin = new GLUI_Spinner(eyePosRollout, "Camera Y", GLUI_SPINNER_FLOAT, &EyeY, 0, (GLUI_Update_CB)NULL);
-    GLUI_Spinner *epzSpin = new GLUI_Spinner(eyePosRollout, "Camera Z", GLUI_SPINNER_FLOAT, &EyeZ, 0, (GLUI_Update_CB)NULL);
+    GLUI_Spinner *epxSpin = new GLUI_Spinner(eyePosRollout, "Camera X", GLUI_SPINNER_FLOAT, &EyeX, 0, look);
+    GLUI_Spinner *epySpin = new GLUI_Spinner(eyePosRollout, "Camera Y", GLUI_SPINNER_FLOAT, &EyeY, 0, look);
+    GLUI_Spinner *epzSpin = new GLUI_Spinner(eyePosRollout, "Camera Z", GLUI_SPINNER_FLOAT, &EyeZ, 0, look);
 
 
-    GLUI_Spinner *laxSpin = new GLUI_Spinner(lookAtRollout, "Lookat X", GLUI_SPINNER_FLOAT, &LookAtX, 0, (GLUI_Update_CB)NULL);
-    GLUI_Spinner *laySpin = new GLUI_Spinner(lookAtRollout, "Lookat Y", GLUI_SPINNER_FLOAT, &LookAtY, 0, (GLUI_Update_CB)NULL);
-    GLUI_Spinner *lazSpin = new GLUI_Spinner(lookAtRollout, "Lookat Z", GLUI_SPINNER_FLOAT, &LookAtZ, 0, (GLUI_Update_CB)NULL);
+    GLUI_Spinner *laxSpin = new GLUI_Spinner(lookAtRollout, "Lookat X", GLUI_SPINNER_FLOAT, &LookAtX, 0, look);
+    GLUI_Spinner *laySpin = new GLUI_Spinner(lookAtRollout, "Lookat Y", GLUI_SPINNER_FLOAT, &LookAtY, 0, look);
+    GLUI_Spinner *lazSpin = new GLUI_Spinner(lookAtRollout, "Lookat Z", GLUI_SPINNER_FLOAT, &LookAtZ, 0, look);
 
     new GLUI_Column(control_panel, true);
 
