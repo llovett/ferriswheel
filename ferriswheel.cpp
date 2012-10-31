@@ -17,12 +17,13 @@
 #define PI 3.1415926535
 #define WHEEL_SIZE 10.0f
 #define WHEEL_DEPTH 2.0f
+#define BENCH_WIDTH 5.0f
 #define BASE_HEIGHT 10.0f
 #define BASE_WIDTH 2.0f
 #define BASE_DEPTH 4.0f
 
 /* global variables */
-GLfloat Theta = 0.0f;
+GLfloat Theta = 0.5f;
 GLfloat Speed = 0.1f;
 GLfloat EyeX, EyeY, EyeZ;
 GLfloat LookAtX, LookAtY, LookAtZ;
@@ -52,7 +53,7 @@ mProps bluePlasticMaterials = {
     { 0.0, 0.0, 0.3, 1.0 },
     { 0.0, 0.0, 0.9, 1.0 },
     { 0.7, 0.7, 0.9, 1.0 },
-    32.0
+    40.0
 };
 
 lProps whiteLighting = {
@@ -90,13 +91,9 @@ void init() {
 void look(int id) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    // gluLookAt(5.0, 10.0, 40.0,
-    // 	      0.0, 10.0, 0.0,
-    // 	      0.0, 1.0, 0.0);
     gluLookAt(EyeX, EyeY, EyeZ,
 	      LookAtX, LookAtY, LookAtZ,
 	      0.0, 1.0, 0.0);
-
 }
 
 void reshape(int w, int h) {
@@ -228,16 +225,16 @@ void wheelSide() {
 
     glPushMatrix();
     gluCylinder(p, WHEEL_SIZE, WHEEL_SIZE, WHEEL_DEPTH, 8, 8);
-    gluCylinder(p, WHEEL_SIZE/2, WHEEL_SIZE/2, WHEEL_DEPTH, 8, 8);
+    gluCylinder(p, WHEEL_SIZE/1.2, WHEEL_SIZE/1.2, WHEEL_DEPTH, 8, 8);
 
     glPushMatrix();
     glTranslatef(0.0, 0.0, WHEEL_DEPTH);
-    gluDisk(p, WHEEL_SIZE/2, WHEEL_SIZE, 8, 8);
+    gluDisk(p, WHEEL_SIZE/1.2, WHEEL_SIZE, 8, 8);
     glPopMatrix();
 
     glPushMatrix();
     glRotatef(180.0f, 0.0, 1.0, 0.0);
-    gluDisk(p, WHEEL_SIZE/2, WHEEL_SIZE, 8, 8);
+    gluDisk(p, WHEEL_SIZE/1.2, WHEEL_SIZE, 8, 8);
     glPopMatrix();
 
     glPopMatrix();
@@ -251,19 +248,28 @@ void display() {
     /* ferris wheel base */
     wheelBase();
     glPushMatrix();
-    glTranslatef(WHEEL_DEPTH + BASE_WIDTH, 0, 0);
+    glTranslatef(2*WHEEL_DEPTH + BASE_WIDTH + BENCH_WIDTH, 0, 0);
     wheelBase();
     glPopMatrix();
+    /* end ferris wheel base */
 
     /* wheel */
     glPushMatrix();
-
     glTranslatef(BASE_WIDTH, 0, 0);
     glTranslatef(0, BASE_HEIGHT, 0);
     glRotatef(Theta, 1, 0, 0);
     glRotatef(90.0, 0, 1, 0);
     wheelSide();
     glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(BASE_WIDTH + WHEEL_DEPTH + BENCH_WIDTH, 0, 0);
+    glTranslatef(0, BASE_HEIGHT, 0);
+    glRotatef(Theta, 1, 0, 0);
+    glRotatef(90.0, 0, 1, 0);
+    wheelSide();
+    glPopMatrix();
+    /* end wheel */
 
     glutSwapBuffers();
 }
@@ -277,7 +283,7 @@ void setMaterial( mProps *props ) {
 }
 
 void update() {
-    Theta += Speed;
+    Theta += Speed/10.0;
     display();
 }
 
@@ -341,6 +347,7 @@ int main(int argc, char **argv) {
     new GLUI_Column(control_panel, true);
 
     GLUI_Spinner *speedSpin = new GLUI_Spinner(control_panel, "Rotation Speed", GLUI_SPINNER_FLOAT, &Speed, 0, (GLUI_Update_CB)NULL);
+    speedSpin->set_float_limits(-5.0f, 5.0f, GLUI_LIMIT_CLAMP);
 
     control_panel->set_main_gfx_window(main_window);
     GLUI_Master.set_glutIdleFunc(update);
