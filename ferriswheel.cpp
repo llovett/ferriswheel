@@ -177,6 +177,8 @@ void display() {
 
     glPushMatrix();
     gluCylinder(p, WHEEL_SIZE, WHEEL_SIZE, WHEEL_DEPTH, 8, 8);
+    gluCylinder(p, WHEEL_SIZE/2, WHEEL_SIZE/2, WHEEL_DEPTH, 8, 8);
+
     glPushMatrix();
     glTranslatef(0.0, 0.0, WHEEL_DEPTH);
     gluDisk(p, WHEEL_SIZE/2, WHEEL_SIZE, 8, 8);
@@ -186,6 +188,7 @@ void display() {
     glRotatef(180.0f, 0.0, 1.0, 0.0);
     gluDisk(p, WHEEL_SIZE/2, WHEEL_SIZE, 8, 8);
     glPopMatrix();
+    
     
 
     // /* torso */
