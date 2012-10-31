@@ -244,6 +244,7 @@ void wheelSide() {
 }
 
 void display() {
+    glutSetWindow(main_window);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
 
@@ -256,8 +257,10 @@ void display() {
 
     /* wheel */
     glPushMatrix();
+
     glTranslatef(BASE_WIDTH, 0, 0);
     glTranslatef(0, BASE_HEIGHT, 0);
+    glRotatef(Theta, 1, 0, 0);
     glRotatef(90.0, 0, 1, 0);
     wheelSide();
     glPopMatrix();
@@ -271,6 +274,11 @@ void setMaterial( mProps *props ) {
     glMaterialfv(GL_FRONT, GL_DIFFUSE, currentMaterials->diffuse);
     glMaterialfv(GL_FRONT, GL_SPECULAR, currentMaterials->specular);
     glMaterialf(GL_FRONT, GL_SHININESS, currentMaterials->shininess);
+}
+
+void update() {
+    Theta += Speed;
+    display();
 }
 
 int main(int argc, char **argv) {
@@ -334,44 +342,8 @@ int main(int argc, char **argv) {
 
     GLUI_Spinner *speedSpin = new GLUI_Spinner(control_panel, "Rotation Speed", GLUI_SPINNER_FLOAT, &Speed, 0, (GLUI_Update_CB)NULL);
 
-    // GLUI_Spinner *bend0=new GLUI_Spinner(control_panel, "BODY Angle", GLUI_SPINNER_FLOAT, &(theta[0]), 0,(GLUI_Update_CB) NULL);
-    // bend0->set_float_limits(-180.0, 180.0, GLUI_LIMIT_CLAMP);
-
-    // GLUI_Rollout *head_rollout = new GLUI_Rollout(control_panel, "HEAD Angles", false );
-    // GLUI_Spinner *bend1=new GLUI_Spinner(head_rollout, "Head Angle 1", GLUI_SPINNER_FLOAT, &(theta[1]), 0,(GLUI_Update_CB) NULL);
-    // bend1->set_float_limits(-10.0, 10.0, GLUI_LIMIT_CLAMP);
-    // GLUI_Spinner *bend2=new GLUI_Spinner(head_rollout, "Head Angle 2", GLUI_SPINNER_FLOAT, &(theta[2]), 0,(GLUI_Update_CB) NULL);
-    // bend2->set_float_limits(-180.0, 180.0, GLUI_LIMIT_CLAMP);
-
-    // new GLUI_Column(control_panel, true);
-
-    // GLUI_Rollout *right_arm_rollout = new GLUI_Rollout(control_panel, "Right Arm Angles", false );
-    // GLUI_Spinner *bend3=new GLUI_Spinner(right_arm_rollout, "Upper Arm Angle", GLUI_SPINNER_FLOAT, &(theta[3]), 0, (GLUI_Update_CB)NULL);
-    // bend3->set_float_limits(-180.0, 90.0, GLUI_LIMIT_CLAMP);
-    // GLUI_Spinner *bend4=new GLUI_Spinner(right_arm_rollout, "Lower Arm Angle", GLUI_SPINNER_FLOAT, &(theta[4]), 0, (GLUI_Update_CB)NULL);
-    // bend4->set_float_limits(-90.0, 0.0, GLUI_LIMIT_CLAMP);
-
-    // GLUI_Rollout *left_arm_rollout = new GLUI_Rollout(control_panel, "Left Arm Angles", false );
-    // GLUI_Spinner *bend5=new GLUI_Spinner(left_arm_rollout, "Upper Arm Angle", GLUI_SPINNER_FLOAT, &(theta[5]), 0, (GLUI_Update_CB)NULL);
-    // bend5->set_float_limits(-180.0, 90.0, GLUI_LIMIT_CLAMP);
-    // GLUI_Spinner *bend6=new GLUI_Spinner(left_arm_rollout, "Lower Arm Angle", GLUI_SPINNER_FLOAT, &(theta[6]), 0, (GLUI_Update_CB)NULL);
-    // bend6->set_float_limits(-90.0, 0.0, GLUI_LIMIT_CLAMP);
-
-    // new GLUI_Column(control_panel, true);
-
-    // GLUI_Rollout *right_leg_rollout = new GLUI_Rollout(control_panel, "Right Leg Angles", false );
-    // GLUI_Spinner *bend7= new GLUI_Spinner(right_leg_rollout, "Upper Leg Angle", GLUI_SPINNER_FLOAT, &(theta[7]), 0, (GLUI_Update_CB)NULL);
-    // bend7->set_float_limits(-140.0, 70.0, GLUI_LIMIT_CLAMP);
-    // GLUI_Spinner *bend8= new GLUI_Spinner(right_leg_rollout, "Lower Leg Angle", GLUI_SPINNER_FLOAT, &(theta[8]), 0, (GLUI_Update_CB)NULL);
-    // bend8->set_float_limits(0.0, 1600.0, GLUI_LIMIT_CLAMP);
-
-    // GLUI_Rollout *left_leg_rollout = new GLUI_Rollout(control_panel, "Left Leg Angles", false );
-    // GLUI_Spinner *bend9=new GLUI_Spinner(left_leg_rollout, "Upper Leg Angle", GLUI_SPINNER_FLOAT, &(theta[9]), 0, (GLUI_Update_CB)NULL);
-    // bend9->set_float_limits(-140.0, 70.0, GLUI_LIMIT_CLAMP);
-    // GLUI_Spinner *bend10=new GLUI_Spinner(left_leg_rollout, "Lower Leg Angle", GLUI_SPINNER_FLOAT, &(theta[10]), 0, (GLUI_Update_CB)NULL);
-    // bend10->set_float_limits(0.0, 160.0, GLUI_LIMIT_CLAMP);
-
     control_panel->set_main_gfx_window(main_window);
+    GLUI_Master.set_glutIdleFunc(update);
 
     glutMainLoop();
 }

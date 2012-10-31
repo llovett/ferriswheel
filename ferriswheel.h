@@ -16,3 +16,4 @@ typedef struct {
 /* function declarations */
 void look(int id);
 void setMaterial( mProps* );
+void update();
