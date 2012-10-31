@@ -17,7 +17,9 @@
 #define PI 3.1415926535
 #define WHEEL_SIZE 10.0f
 #define WHEEL_DEPTH 2.0f
-#define BASE_SIZE 5.0f
+#define BASE_HEIGHT 10.0f
+#define BASE_WIDTH 2.0f
+#define BASE_DEPTH 4.0f
 
 /* global variables */
 GLfloat Theta = 0.0f;
@@ -46,6 +48,13 @@ mProps redPlasticMaterials = {
     32.0
 };
 
+mProps bluePlasticMaterials = {
+    { 0.0, 0.0, 0.3, 1.0 },
+    { 0.0, 0.0, 0.9, 1.0 },
+    { 0.7, 0.7, 0.9, 1.0 },
+    32.0
+};
+
 lProps whiteLighting = {
     {0.0, 0.0, 0.0, 1.0},
     {1.0, 1.0, 1.0, 1.0},
@@ -65,14 +74,14 @@ lProps *currentLighting;
 
 GLfloat theta[] = {65.0, 0.0, 0.0, -42.0, -12.0, -33.0, -48.0,18.0, 74.0, -14.0, 11.0};
 
-GLUquadricObj *p, *q;  
+GLUquadricObj *p, *q;
 int main_window;
 
 void init() {
     /* setup some globals */
     EyeX = EyeY = 10.0f;
     EyeZ = 30.0f;
-    
+
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glColor3f(0.0, 0.0, 0.0);
     look(0);
@@ -88,7 +97,7 @@ void look(int id) {
 	      LookAtX, LookAtY, LookAtZ,
 	      0.0, 1.0, 0.0);
 
-}    
+}
 
 void reshape(int w, int h) {
     glViewport(0, 0, w, h);
@@ -99,13 +108,13 @@ void reshape(int w, int h) {
     gluPerspective(60.0, aspect, 0.5, 200.0);
     glMatrixMode(GL_MODELVIEW);
     glutSetWindow(main_window);
-    glutPostWindowRedisplay(main_window);  
+    glutPostWindowRedisplay(main_window);
 }
 
 
 void torso() {
     glPushMatrix();
-    glRotatef(-90.0, 1.0, 0.0, 0.0); 
+    glRotatef(-90.0, 1.0, 0.0, 0.0);
     gluCylinder(p, TORSO_RADIUS, TORSO_RADIUS, TORSO_HEIGHT, 8, 8);
     glPopMatrix();
 }
@@ -116,64 +125,106 @@ void head(){
 
 void right_upper_arm(){
     glPushMatrix();
-    glRotatef(90.0, 1.0, 0.0, 0.0); 
+    glRotatef(90.0, 1.0, 0.0, 0.0);
     gluCylinder(p, ARM_RADIUS, ARM_RADIUS, UPPER_ARM_LENGTH, 8, 8);
     glPopMatrix();
 }
 
 void right_lower_arm() {
     glPushMatrix();
-    glRotatef(90.0, 1.0, 0.0, 0.0); 
+    glRotatef(90.0, 1.0, 0.0, 0.0);
     gluCylinder(p, ARM_RADIUS, ARM_RADIUS, LOWER_ARM_LENGTH, 8, 8);
     glPopMatrix();
 }
 
 void left_upper_arm(){
     glPushMatrix();
-    glRotatef(90.0, 1.0, 0.0, 0.0); 
+    glRotatef(90.0, 1.0, 0.0, 0.0);
     gluCylinder(p, ARM_RADIUS, ARM_RADIUS, UPPER_ARM_LENGTH, 8, 8);
     glPopMatrix();
 }
 
 void left_lower_arm() {
     glPushMatrix();
-    glRotatef(90.0, 1.0, 0.0, 0.0); 
+    glRotatef(90.0, 1.0, 0.0, 0.0);
     gluCylinder(p, ARM_RADIUS, ARM_RADIUS, LOWER_ARM_LENGTH, 8, 8);
     glPopMatrix();
 }
 
 void right_upper_leg(){
     glPushMatrix();
-    glRotatef(90.0, 1.0, 0.0, 0.0); 
+    glRotatef(90.0, 1.0, 0.0, 0.0);
     gluCylinder(p, LEG_RADIUS, LEG_RADIUS, UPPER_LEG_LENGTH, 8, 8);
     glPopMatrix();
 }
 
 void right_lower_leg() {
     glPushMatrix();
-    glRotatef(90.0, 1.0, 0.0, 0.0); 
+    glRotatef(90.0, 1.0, 0.0, 0.0);
     gluCylinder(p, LEG_RADIUS, LEG_RADIUS, LOWER_LEG_LENGTH, 8, 8);
     glPopMatrix();
 }
 
 void left_upper_leg(){
     glPushMatrix();
-    glRotatef(90.0, 1.0, 0.0, 0.0); 
+    glRotatef(90.0, 1.0, 0.0, 0.0);
     gluCylinder(p, LEG_RADIUS, LEG_RADIUS, UPPER_LEG_LENGTH, 8, 8);
     glPopMatrix();
 }
 
 void left_lower_leg() {
     glPushMatrix();
-    glRotatef(90.0, 1.0, 0.0, 0.0); 
+    glRotatef(90.0, 1.0, 0.0, 0.0);
     gluCylinder(p, LEG_RADIUS, LEG_RADIUS, LOWER_LEG_LENGTH, 8, 8);
     glPopMatrix();
 }
 
+void wheelBase() {
+    setMaterial( &redPlasticMaterials );
 
-void display() {
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+
+    glBegin(GL_QUADS);
+
+    glNormal3f(0, -1, 0);
+    glVertex3f(0, 0, -BASE_DEPTH/2);
+    glVertex3f(BASE_WIDTH, 0, -BASE_DEPTH/2);
+    glVertex3f(BASE_WIDTH, 0, BASE_DEPTH/2);
+    glVertex3f(0, 0, BASE_DEPTH/2);
+
+    glNormal3f(0, -BASE_DEPTH/2, -BASE_HEIGHT);
+    glVertex3f(0, 0, -BASE_DEPTH/2);
+    glVertex3f(BASE_WIDTH, 0, -BASE_DEPTH/2);
+    glVertex3f(BASE_WIDTH, BASE_HEIGHT, 0);
+    glVertex3f(0, BASE_HEIGHT, 0);
+
+    glNormal3f(0, BASE_DEPTH/2, BASE_HEIGHT);
+    glVertex3f(0, 0, BASE_DEPTH/2);
+    glVertex3f(BASE_WIDTH, 0, BASE_DEPTH/2);
+    glVertex3f(BASE_WIDTH, BASE_HEIGHT, 0);
+    glVertex3f(0, BASE_HEIGHT, 0);
+    
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    
+    glNormal3f(-1, 0, 0);
+    glVertex3f(0, 0, -BASE_DEPTH/2);
+    glVertex3f(0, 0, BASE_DEPTH/2);
+    glVertex3f(0, BASE_HEIGHT, 0);
+
+    glNormal3f(1, 0, 0);
+    glVertex3f(BASE_WIDTH, 0, -BASE_DEPTH/2);
+    glVertex3f(BASE_WIDTH, 0, BASE_DEPTH/2);
+    glVertex3f(BASE_WIDTH, BASE_HEIGHT, 0);
+
+    glEnd();
+
+    glPopMatrix();
+}
+
+void wheelSide() {
+    setMaterial( &bluePlasticMaterials );
 
     glPushMatrix();
     gluCylinder(p, WHEEL_SIZE, WHEEL_SIZE, WHEEL_DEPTH, 8, 8);
@@ -188,64 +239,38 @@ void display() {
     glRotatef(180.0f, 0.0, 1.0, 0.0);
     gluDisk(p, WHEEL_SIZE/2, WHEEL_SIZE, 8, 8);
     glPopMatrix();
-    
-    
-
-    // /* torso */
-    // glRotatef(theta[0], 0.0, 1.0, 0.0);
-    // torso();
- 
-    // /* head */
-    // glPushMatrix();
-    // glTranslatef(0.0, HEADX, 0.0);
-    // glRotatef(theta[1], 1.0, 0.0, 0.0);
-    // glRotatef(theta[2], 0.0, 1.0, 0.0);
-    // glTranslatef(0.0, HEADY, 0.0);
-    // head();
-    // glPopMatrix();
-  
-    // /* right arm */
-    // glPushMatrix();
-    // glTranslatef(LUAX, LUAY, 0.0);
-    // glRotatef(theta[3], 1.0, 0.0, 0.0);
-    // right_upper_arm();
-    // glTranslatef(0.0, LLAY, 0.0);
-    // glRotatef(theta[4], 1.0, 0.0, 0.0);
-    // right_lower_arm();
-    // glPopMatrix();
-
-    // /* left arm */
-    // glPushMatrix();
-    // glTranslatef(RUAX, RUAY, 0.0);
-    // glRotatef(theta[5], 1.0, 0.0, 0.0);
-    // left_upper_arm();
-    // glTranslatef(0.0, RLAY, 0.0);
-    // glRotatef(theta[6], 1.0, 0.0, 0.0);
-    // left_lower_arm();
-    // glPopMatrix();
-
-    // /* right leg */
-    // glPushMatrix();
-    // glTranslatef(LULX, LULY, 0.0);
-    // glRotatef(theta[7], 1.0, 0.0, 0.0);
-    // right_upper_leg();
-    // glTranslatef(0.0, LLLY, 0.0);
-    // glRotatef(theta[8], 1.0, 0.0, 0.0);
-    // right_lower_leg();
-    // glPopMatrix();
-
-    // /* left leg */
-    // glPushMatrix();
-    // glTranslatef(RULX, RULY, 0.0);
-    // glRotatef(theta[9], 1.0, 0.0, 0.0);
-    // left_upper_leg();
-    // glTranslatef(0.0, RLLY, 0.0);
-    // glRotatef(theta[10], 1.0, 0.0, 0.0);
-    // left_lower_leg();
-    // glPopMatrix();
 
     glPopMatrix();
-    glutSwapBuffers(); 
+}
+
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+
+    /* ferris wheel base */
+    wheelBase();
+    glPushMatrix();
+    glTranslatef(WHEEL_DEPTH + BASE_WIDTH, 0, 0);
+    wheelBase();
+    glPopMatrix();
+
+    /* wheel */
+    glPushMatrix();
+    glTranslatef(BASE_WIDTH, 0, 0);
+    glTranslatef(0, BASE_HEIGHT, 0);
+    glRotatef(90.0, 0, 1, 0);
+    wheelSide();
+    glPopMatrix();
+
+    glutSwapBuffers();
+}
+
+void setMaterial( mProps *props ) {
+    currentMaterials = props;
+    glMaterialfv(GL_FRONT, GL_AMBIENT, currentMaterials->ambient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, currentMaterials->diffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, currentMaterials->specular);
+    glMaterialf(GL_FRONT, GL_SHININESS, currentMaterials->shininess);
 }
 
 int main(int argc, char **argv) {
@@ -257,23 +282,35 @@ int main(int argc, char **argv) {
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    currentMaterials = &redPlasticMaterials;
-    glMaterialfv(GL_FRONT, GL_AMBIENT, currentMaterials->ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, currentMaterials->diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, currentMaterials->specular);
-    glMaterialf(GL_FRONT, GL_SHININESS, currentMaterials->shininess);
-    currentLighting = &whiteLighting;
-    glLightfv(GL_LIGHT0, GL_AMBIENT, currentLighting->ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, currentLighting->diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, currentLighting->specular);
-    glLightfv(GL_LIGHT0, GL_POSITION, light0_pos);
+    glEnable(GL_NORMALIZE);
+    // glEnable(GL_LIGHT0);
+    // currentMaterials = &redPlasticMaterials;
+    // glMaterialfv(GL_FRONT, GL_AMBIENT, currentMaterials->ambient);
+    // glMaterialfv(GL_FRONT, GL_DIFFUSE, currentMaterials->diffuse);
+    // glMaterialfv(GL_FRONT, GL_SPECULAR, currentMaterials->specular);
+    // glMaterialf(GL_FRONT, GL_SHININESS, currentMaterials->shininess);
+    // currentLighting = &whiteLighting;
+    // glLightfv(GL_LIGHT0, GL_AMBIENT, currentLighting->ambient);
+    // glLightfv(GL_LIGHT0, GL_DIFFUSE, currentLighting->diffuse);
+    // glLightfv(GL_LIGHT0, GL_SPECULAR, currentLighting->specular);
+    // glLightfv(GL_LIGHT0, GL_POSITION, light0_pos);
 
     p = gluNewQuadric();
     q = gluNewQuadric();
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
     init();
+
+    glEnable(GL_LIGHT0);
+    setMaterial( &redPlasticMaterials );
+
+    currentLighting = &whiteLighting;
+    glLightfv(GL_LIGHT0, GL_AMBIENT, currentLighting->ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, currentLighting->diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, currentLighting->specular);
+    glLightfv(GL_LIGHT0, GL_POSITION, light0_pos);
+
+
 
     GLUI *control_panel = GLUI_Master.create_glui( "Controls",0, 50, 700 );
 
@@ -334,7 +371,7 @@ int main(int argc, char **argv) {
     // GLUI_Spinner *bend10=new GLUI_Spinner(left_leg_rollout, "Lower Leg Angle", GLUI_SPINNER_FLOAT, &(theta[10]), 0, (GLUI_Update_CB)NULL);
     // bend10->set_float_limits(0.0, 160.0, GLUI_LIMIT_CLAMP);
 
-    control_panel->set_main_gfx_window(main_window); 
+    control_panel->set_main_gfx_window(main_window);
 
     glutMainLoop();
 }
