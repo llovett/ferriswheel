@@ -19,6 +19,8 @@
 #define WHEEL_DEPTH 2.0f
 #define WHEEL_POINTS 8
 #define BENCH_WIDTH 5.0f
+#define BENCH_HEIGHT 4.0f
+#define BENCH_DEPTH 2.0f
 #define BASE_HEIGHT 10.0f
 #define BASE_WIDTH 2.0f
 #define BASE_DEPTH 4.0f
@@ -177,6 +179,56 @@ void left_lower_leg() {
     glPopMatrix();
 }
 
+void box(GLfloat width, GLfloat height, GLfloat depth) {
+    glBegin(GL_QUADS);
+    
+    glNormal3f(0, -1, 0);
+    glVertex3f(0, 0, 0);
+    glVertex3f(width, 0, 0);
+    glVertex3f(width, 0, depth);
+    glVertex3f(0, 0, depth);
+
+    glNormal3f(0, 0, -1);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, height, 0);
+    glVertex3f(width, height, 0);
+    glVertex3f(width, 0, 0);
+
+    glNormal3f(-1, 0, 0);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 0, depth);
+    glVertex3f(0, height, depth);
+    glVertex3f(0, height, 0);
+
+    glNormal3f(1, 0, 0);
+    glVertex3f(width, 0, 0);
+    glVertex3f(width, 0, depth);
+    glVertex3f(width, height, depth);
+    glVertex3f(width, height, 0);
+
+    glNormal3f(0, 1, 0);
+    glVertex3f(0, height, 0);
+    glVertex3f(width, height, 0);
+    glVertex3f(width, height, depth);
+    glVertex3f(0, height, depth);
+
+    glNormal3f(0, 0, 1);
+    glVertex3f(0, 0, depth);
+    glVertex3f(width, 0, depth);
+    glVertex3f(width, height, depth);
+    glVertex3f(0, height, depth);
+
+    glEnd();
+}
+
+void bench() {
+    box(BENCH_WIDTH, BENCH_HEIGHT, BENCH_DEPTH);
+    glPushMatrix();
+    glTranslatef(0, 0, BENCH_DEPTH);
+    box(BENCH_WIDTH, BENCH_HEIGHT/2, BENCH_DEPTH);
+    glPopMatrix();
+}
+
 void wheelBase() {
     setMaterial( &redPlasticMaterials );
 
@@ -274,6 +326,17 @@ void wheel() {
     gluCylinder(p, 0.75, 0.75, 2*WHEEL_DEPTH + BENCH_WIDTH, 8, 8);
     glPopMatrix();
     /* end axle */
+
+    /* benches */
+
+    for ( int i=0; i<WHEEL_POINTS; i++ ) {
+	glPushMatrix();
+	glRotatef(i*360.0/WHEEL_POINTS, 1, 0, 0);
+	glTranslatef(WHEEL_DEPTH, 0, WHEEL_SIZE - 2*BENCH_DEPTH);
+	bench();
+	glPopMatrix();
+    }
+    /* end benches */
 }    
 
 void display() {
