@@ -17,6 +17,7 @@
 #define PI 3.1415926535
 #define WHEEL_SIZE 10.0f
 #define WHEEL_DEPTH 2.0f
+#define WHEEL_POINTS 8
 #define BENCH_WIDTH 5.0f
 #define BASE_HEIGHT 10.0f
 #define BASE_WIDTH 2.0f
@@ -224,21 +225,56 @@ void wheelSide() {
     setMaterial( &bluePlasticMaterials );
 
     glPushMatrix();
-    gluCylinder(p, WHEEL_SIZE, WHEEL_SIZE, WHEEL_DEPTH, 8, 8);
-    gluCylinder(p, WHEEL_SIZE/1.2, WHEEL_SIZE/1.2, WHEEL_DEPTH, 8, 8);
+
+    gluCylinder(p, WHEEL_SIZE, WHEEL_SIZE, WHEEL_DEPTH, WHEEL_POINTS, 8);
+    gluCylinder(p, WHEEL_SIZE/1.2, WHEEL_SIZE/1.2, WHEEL_DEPTH, WHEEL_POINTS, 8);
 
     glPushMatrix();
     glTranslatef(0.0, 0.0, WHEEL_DEPTH);
-    gluDisk(p, WHEEL_SIZE/1.2, WHEEL_SIZE, 8, 8);
+    gluDisk(p, WHEEL_SIZE/1.2, WHEEL_SIZE, WHEEL_POINTS, 8);
     glPopMatrix();
 
     glPushMatrix();
     glRotatef(180.0f, 0.0, 1.0, 0.0);
-    gluDisk(p, WHEEL_SIZE/1.2, WHEEL_SIZE, 8, 8);
+    gluDisk(p, WHEEL_SIZE/1.2, WHEEL_SIZE, WHEEL_POINTS, 8);
+    glPopMatrix();
+
+    GLfloat spindleLength = WHEEL_SIZE/1.1;
+
+    glPushMatrix();
+    glRotatef(90.0, 0, 1, 0);
+    glTranslatef(-WHEEL_DEPTH/2, 0, 0);
+    for ( int i=0; i<WHEEL_POINTS; i++ ) {
+	glPushMatrix();
+	glRotatef(i*360.0/WHEEL_POINTS, 1, 0, 0);
+	gluCylinder(p, WHEEL_DEPTH/4, WHEEL_DEPTH/4, spindleLength, WHEEL_POINTS, 8);
+	glPopMatrix();
+    }
     glPopMatrix();
 
     glPopMatrix();
 }
+
+void wheel() {
+    /* sides of the wheel */
+    glPushMatrix();
+    glRotatef(90.0, 0, 1, 0);
+    wheelSide();
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(WHEEL_DEPTH + BENCH_WIDTH, 0, 0);
+    glRotatef(90.0, 0, 1, 0);
+    wheelSide();
+    glPopMatrix();
+    /* end wheel sides */
+
+    /* axle */
+    glPushMatrix();
+    glRotatef(90.0, 0, 1, 0);
+    gluCylinder(p, 0.75, 0.75, 2*WHEEL_DEPTH + BENCH_WIDTH, 8, 8);
+    glPopMatrix();
+    /* end axle */
+}    
 
 void display() {
     glutSetWindow(main_window);
@@ -255,19 +291,9 @@ void display() {
 
     /* wheel */
     glPushMatrix();
-    glTranslatef(BASE_WIDTH, 0, 0);
-    glTranslatef(0, BASE_HEIGHT, 0);
+    glTranslatef(BASE_WIDTH, BASE_HEIGHT, 0);
     glRotatef(Theta, 1, 0, 0);
-    glRotatef(90.0, 0, 1, 0);
-    wheelSide();
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(BASE_WIDTH + WHEEL_DEPTH + BENCH_WIDTH, 0, 0);
-    glTranslatef(0, BASE_HEIGHT, 0);
-    glRotatef(Theta, 1, 0, 0);
-    glRotatef(90.0, 0, 1, 0);
-    wheelSide();
+    wheel();
     glPopMatrix();
     /* end wheel */
 
