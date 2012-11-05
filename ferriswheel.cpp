@@ -16,6 +16,7 @@
 /* constants */
 #define PI 3.1415926535
 #define WHEEL_SIZE 10.0f
+#define WHEEL_INNER_SIZE WHEEL_SIZE/1.2
 #define WHEEL_DEPTH 2.0f
 #define WHEEL_POINTS 8
 #define BENCH_WIDTH 5.0f
@@ -171,11 +172,12 @@ void box(GLfloat width, GLfloat height, GLfloat depth) {
 void bench() {
     setMaterial( &benchMats );
 
-    box(BENCH_WIDTH, BENCH_HEIGHT, BENCH_DEPTH);
     glPushMatrix();
-    glTranslatef(0, 0, BENCH_DEPTH);
-    box(BENCH_WIDTH, BENCH_HEIGHT/2, BENCH_DEPTH);
+    glTranslatef(0, 0, -BENCH_DEPTH);
+    box(BENCH_WIDTH, BENCH_HEIGHT, BENCH_DEPTH);
     glPopMatrix();
+
+    box(BENCH_WIDTH, BENCH_HEIGHT/2, BENCH_DEPTH);
 }
 
 void wheelBase() {
@@ -228,16 +230,16 @@ void wheelSide() {
     glPushMatrix();
 
     gluCylinder(p, WHEEL_SIZE, WHEEL_SIZE, WHEEL_DEPTH, WHEEL_POINTS, 8);
-    gluCylinder(p, WHEEL_SIZE/1.2, WHEEL_SIZE/1.2, WHEEL_DEPTH, WHEEL_POINTS, 8);
+    gluCylinder(p, WHEEL_INNER_SIZE, WHEEL_INNER_SIZE, WHEEL_DEPTH, WHEEL_POINTS, 8);
 
     glPushMatrix();
     glTranslatef(0.0, 0.0, WHEEL_DEPTH);
-    gluDisk(p, WHEEL_SIZE/1.2, WHEEL_SIZE, WHEEL_POINTS, 8);
+    gluDisk(p, WHEEL_INNER_SIZE, WHEEL_SIZE, WHEEL_POINTS, 8);
     glPopMatrix();
 
     glPushMatrix();
     glRotatef(180.0f, 0.0, 1.0, 0.0);
-    gluDisk(p, WHEEL_SIZE/1.2, WHEEL_SIZE, WHEEL_POINTS, 8);
+    gluDisk(p, WHEEL_INNER_SIZE, WHEEL_SIZE, WHEEL_POINTS, 8);
     glPopMatrix();
 
     /* begin spindles */
@@ -287,10 +289,9 @@ void wheel() {
 
 	glPushMatrix();
 	glRotatef(phi, 1, 0, 0);
-	glTranslatef(WHEEL_DEPTH, 0, WHEEL_SIZE - 2*BENCH_DEPTH);
+	glTranslatef(WHEEL_DEPTH, 0, WHEEL_INNER_SIZE);
 
 	glPushMatrix();
-	glTranslatef(0, 0, 2*BENCH_DEPTH);
 	glRotatef(-Theta-phi, 1, 0, 0);
 	bench();
 	glPopMatrix();
