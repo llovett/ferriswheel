@@ -45,7 +45,7 @@ GLfloat UPPER_LEG_LENGTH = 4.0, LOWER_LEG_LENGTH = 4.0;
 GLfloat LULX = -2.0, LULY = 0.0, LLLY = -4.0;
 GLfloat RULX = 2.0, RULY = 0.0, RLLY = -4.0;
 
-
+/* various materials */
 mProps redPlasticMaterials = {
     {0.3, 0.0, 0.0, 1.0},
     {0.9, 0.0, 0.0, 1.0},
@@ -68,12 +68,13 @@ mProps spindleMats = {
 };
 
 mProps benchMats = {
-    { 1.0, 0.5, 0.0, 1.0 },
-    { 9.0, 0.0, 0.0, 1.0 },
+    { 0.4, 0.4, 0.0, 1.0 },
+    { 0.4, 0.4, 0.0, 1.0 },
     { 0.8, 0.8, 0.0, 1.0 },
-    20.0
+    40.0
 };
 
+/* various lighting */
 lProps whiteLighting = {
     {0.0, 0.0, 0.0, 1.0},
     {1.0, 1.0, 1.0, 1.0},
