@@ -332,10 +332,6 @@ void recWheel( int depth, float shrink, float netRotation ) {
 	    glTranslatef(shrink*WHEEL_DEPTH, 0, shrink*WHEEL_INNER_SIZE);
 
 	    glPushMatrix();
-	    /* TODO:
-	     * Figure out how to make benches stay stable with
-	     * arbitrary recursion.
-	     * */
 	    glRotatef(-Theta-phi-netRotation, 1, 0, 0);
 	    bench( shrink );
 	    glPopMatrix();
