@@ -300,7 +300,7 @@ void wheelSide() {
     glPopMatrix();
 }
 
-void recWheel( int depth, float shrink ) {
+void recWheel( int depth, float shrink, float netRotation ) {
     setMaterial( &bluePlasticMaterials );
 
     /* sides of the wheel */
@@ -332,7 +332,11 @@ void recWheel( int depth, float shrink ) {
 	    glTranslatef(shrink*WHEEL_DEPTH, 0, shrink*WHEEL_INNER_SIZE);
 
 	    glPushMatrix();
-	    glRotatef(-Theta-phi, 1, 0, 0);
+	    /* TODO:
+	     * Figure out how to make benches stay stable with
+	     * arbitrary recursion.
+	     * */
+	    glRotatef(-Theta-phi-netRotation, 1, 0, 0);
 	    bench( shrink );
 	    glPopMatrix();
 
@@ -349,7 +353,8 @@ void recWheel( int depth, float shrink ) {
 
 	    glPushMatrix();
 	    glRotatef((depth%2 == 0? 2 : -2)*Theta, 1, 0, 0);
-	    recWheel( depth-1, shrink/RECURSIVE_SHRINK );
+	    recWheel( depth-1, shrink/RECURSIVE_SHRINK,
+		      netRotation+(depth%2 == 0? 2 : -2)*Theta+phi );
 	    glPopMatrix();
 
 	    glPopMatrix();
@@ -418,7 +423,7 @@ void display() {
     glTranslatef(BASE_WIDTH, BASE_HEIGHT, 0);
     glRotatef(Theta, 1, 0, 0);
     // wheel();
-    recWheel( RecursiveDepth, 1.0 );
+    recWheel( RecursiveDepth, 1.0, 0.0 );
     glPopMatrix();
     /* end wheel */
 
