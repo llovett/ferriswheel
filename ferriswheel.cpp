@@ -11,6 +11,7 @@
 
 #include <GL/glut.h>
 #include <GL/glui.h>
+#include <math.h>
 #include "ferriswheel.h"
 
 /* constants */
@@ -25,10 +26,12 @@
 #define BASE_HEIGHT 10.0f
 #define BASE_WIDTH 2.0f
 #define BASE_DEPTH 4.0f
+#define RECURSIVE_SHRINK 3.0f
 
 /* global variables */
 GLfloat Theta = 0.5f;
 GLfloat Speed = 0.1f;
+int RecursiveDepth = 0;
 GLfloat EyeX, EyeY, EyeZ;
 GLfloat LookAtX, LookAtY, LookAtZ;
 
@@ -170,15 +173,15 @@ void box(GLfloat width, GLfloat height, GLfloat depth) {
     glEnd();
 }
 
-void bench() {
+void bench( float shrink ) {
     setMaterial( &benchMats );
 
     glPushMatrix();
-    glTranslatef(0, 0, -BENCH_DEPTH);
-    box(BENCH_WIDTH, BENCH_HEIGHT, BENCH_DEPTH);
+    glTranslatef(0, 0, -shrink*BENCH_DEPTH);
+    box(shrink*BENCH_WIDTH, shrink*BENCH_HEIGHT, shrink*BENCH_DEPTH);
     glPopMatrix();
 
-    box(BENCH_WIDTH, BENCH_HEIGHT/2, BENCH_DEPTH);
+    box(shrink*BENCH_WIDTH, shrink*BENCH_HEIGHT/2, shrink*BENCH_DEPTH);
 }
 
 void wheelBase() {
@@ -225,6 +228,42 @@ void wheelBase() {
     glPopMatrix();
 }
 
+void recWheelSide( float shrink ) {
+    setMaterial( &bluePlasticMaterials );
+
+    glPushMatrix();
+
+    gluCylinder(p, shrink*WHEEL_SIZE, shrink*WHEEL_SIZE, shrink*WHEEL_DEPTH, WHEEL_POINTS, 8);
+    gluCylinder(p, shrink*WHEEL_INNER_SIZE, shrink*WHEEL_INNER_SIZE, shrink*WHEEL_DEPTH, WHEEL_POINTS, 8);
+
+    glPushMatrix();
+    glTranslatef(0.0, 0.0, shrink*WHEEL_DEPTH);
+    gluDisk(p, shrink*WHEEL_INNER_SIZE, shrink*WHEEL_SIZE, WHEEL_POINTS, 8);
+    glPopMatrix();
+
+    glPushMatrix();
+    glRotatef(180.0f, 0.0, 1.0, 0.0);
+    gluDisk(p, shrink*WHEEL_INNER_SIZE, shrink*WHEEL_SIZE, WHEEL_POINTS, 8);
+    glPopMatrix();
+
+    /* begin spindles */
+    setMaterial( &spindleMats );
+    GLfloat spindleLength = WHEEL_SIZE/1.1;
+    glPushMatrix();
+    glRotatef(90.0, 0, 1, 0);
+    glTranslatef(-shrink*WHEEL_DEPTH/2, 0, 0);
+    for ( int i=0; i<WHEEL_POINTS; i++ ) {
+	glPushMatrix();
+	glRotatef(i*360.0/WHEEL_POINTS, 1, 0, 0);
+	gluCylinder(p, shrink*WHEEL_DEPTH/4, shrink*WHEEL_DEPTH/4, shrink*spindleLength, WHEEL_POINTS, 8);
+	glPopMatrix();
+    }
+    glPopMatrix();
+    /* end spindles */
+
+    glPopMatrix();
+}
+
 void wheelSide() {
     setMaterial( &bluePlasticMaterials );
 
@@ -261,6 +300,65 @@ void wheelSide() {
     glPopMatrix();
 }
 
+void recWheel( int depth, float shrink ) {
+    setMaterial( &bluePlasticMaterials );
+
+    /* sides of the wheel */
+    glPushMatrix();
+    glRotatef(90.0, 0, 1, 0);
+    recWheelSide( shrink );
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(shrink*(WHEEL_DEPTH + BENCH_WIDTH), 0, 0);
+    glRotatef(90.0, 0, 1, 0);
+    recWheelSide( shrink );
+    glPopMatrix();
+    /* end wheel sides */
+
+    /* axle */
+    glPushMatrix();
+    glRotatef(90.0, 0, 1, 0);
+    gluCylinder(p, shrink*0.75, shrink*0.75, shrink*(2*WHEEL_DEPTH + BENCH_WIDTH), 8, 8);
+    glPopMatrix();
+    /* end axle */
+
+    if ( depth == 0 ) {
+	/* benches */
+	for ( int i=0; i<WHEEL_POINTS; i++ ) {
+	    GLfloat phi = i*360.0/WHEEL_POINTS;
+
+	    glPushMatrix();
+	    glRotatef(phi, 1, 0, 0);
+	    glTranslatef(shrink*WHEEL_DEPTH, 0, shrink*WHEEL_INNER_SIZE);
+
+	    glPushMatrix();
+	    glRotatef(-Theta-phi, 1, 0, 0);
+	    bench( shrink );
+	    glPopMatrix();
+
+	    glPopMatrix();
+	}
+    } else {
+	/* recursive call to make more wheels */
+	for ( int i=0; i<WHEEL_POINTS; i++ ) {
+	    GLfloat phi = i*360.0/WHEEL_POINTS;
+
+	    glPushMatrix();
+	    glRotatef(phi, 1, 0, 0);
+	    glTranslatef(shrink*WHEEL_DEPTH, 0, shrink*WHEEL_INNER_SIZE);
+
+	    glPushMatrix();
+	    glRotatef((depth%2 == 0? 2 : -2)*Theta, 1, 0, 0);
+	    recWheel( depth-1, shrink/RECURSIVE_SHRINK );
+	    glPopMatrix();
+
+	    glPopMatrix();
+	}
+    }
+
+    /* end benches */
+}    
+
 void wheel() {
     setMaterial( &bluePlasticMaterials );
 
@@ -287,14 +385,13 @@ void wheel() {
     for ( int i=0; i<WHEEL_POINTS; i++ ) {
 	GLfloat phi = i*360.0/WHEEL_POINTS;
 
-
 	glPushMatrix();
 	glRotatef(phi, 1, 0, 0);
 	glTranslatef(WHEEL_DEPTH, 0, WHEEL_INNER_SIZE);
 
 	glPushMatrix();
 	glRotatef(-Theta-phi, 1, 0, 0);
-	bench();
+	// bench();
 	glPopMatrix();
 
 	glPopMatrix();
@@ -320,7 +417,8 @@ void display() {
     glPushMatrix();
     glTranslatef(BASE_WIDTH, BASE_HEIGHT, 0);
     glRotatef(Theta, 1, 0, 0);
-    wheel();
+    // wheel();
+    recWheel( RecursiveDepth, 1.0 );
     glPopMatrix();
     /* end wheel */
 
@@ -388,6 +486,8 @@ int main(int argc, char **argv) {
 
     GLUI_Spinner *speedSpin = new GLUI_Spinner(control_panel, "Rotation Speed", GLUI_SPINNER_FLOAT, &Speed, 0, (GLUI_Update_CB)NULL);
     speedSpin->set_float_limits(-5.0f, 5.0f, GLUI_LIMIT_CLAMP);
+    GLUI_Spinner *recSpin = new GLUI_Spinner(control_panel, "Recursive Depth", GLUI_SPINNER_INT, &RecursiveDepth, 0, (GLUI_Update_CB)NULL);
+    recSpin->set_int_limits(0, 5, GLUI_LIMIT_CLAMP);
 
     control_panel->set_main_gfx_window(main_window);
     GLUI_Master.set_glutIdleFunc(update);
