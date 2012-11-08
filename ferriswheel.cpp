@@ -264,42 +264,6 @@ void recWheelSide( float shrink ) {
     glPopMatrix();
 }
 
-void wheelSide() {
-    setMaterial( &bluePlasticMaterials );
-
-    glPushMatrix();
-
-    gluCylinder(p, WHEEL_SIZE, WHEEL_SIZE, WHEEL_DEPTH, WHEEL_POINTS, 8);
-    gluCylinder(p, WHEEL_INNER_SIZE, WHEEL_INNER_SIZE, WHEEL_DEPTH, WHEEL_POINTS, 8);
-
-    glPushMatrix();
-    glTranslatef(0.0, 0.0, WHEEL_DEPTH);
-    gluDisk(p, WHEEL_INNER_SIZE, WHEEL_SIZE, WHEEL_POINTS, 8);
-    glPopMatrix();
-
-    glPushMatrix();
-    glRotatef(180.0f, 0.0, 1.0, 0.0);
-    gluDisk(p, WHEEL_INNER_SIZE, WHEEL_SIZE, WHEEL_POINTS, 8);
-    glPopMatrix();
-
-    /* begin spindles */
-    setMaterial( &spindleMats );
-    GLfloat spindleLength = WHEEL_SIZE/1.1;
-    glPushMatrix();
-    glRotatef(90.0, 0, 1, 0);
-    glTranslatef(-WHEEL_DEPTH/2, 0, 0);
-    for ( int i=0; i<WHEEL_POINTS; i++ ) {
-	glPushMatrix();
-	glRotatef(i*360.0/WHEEL_POINTS, 1, 0, 0);
-	gluCylinder(p, WHEEL_DEPTH/4, WHEEL_DEPTH/4, spindleLength, WHEEL_POINTS, 8);
-	glPopMatrix();
-    }
-    glPopMatrix();
-    /* end spindles */
-
-    glPopMatrix();
-}
-
 void recWheel( int depth, float shrink, float netRotation ) {
     setMaterial( &bluePlasticMaterials );
 
@@ -366,47 +330,6 @@ void recWheel( int depth, float shrink, float netRotation ) {
 
 	    glPopMatrix();
 	}
-    }
-
-    /* end benches */
-}    
-
-void wheel() {
-    setMaterial( &bluePlasticMaterials );
-
-    /* sides of the wheel */
-    glPushMatrix();
-    glRotatef(90.0, 0, 1, 0);
-    wheelSide();
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(WHEEL_DEPTH + BENCH_WIDTH, 0, 0);
-    glRotatef(90.0, 0, 1, 0);
-    wheelSide();
-    glPopMatrix();
-    /* end wheel sides */
-
-    /* axle */
-    glPushMatrix();
-    glRotatef(90.0, 0, 1, 0);
-    gluCylinder(p, 0.75, 0.75, 2*WHEEL_DEPTH + BENCH_WIDTH, 8, 8);
-    glPopMatrix();
-    /* end axle */
-
-    /* benches */
-    for ( int i=0; i<WHEEL_POINTS; i++ ) {
-	GLfloat phi = i*360.0/WHEEL_POINTS;
-
-	glPushMatrix();
-	glRotatef(phi, 1, 0, 0);
-	glTranslatef(WHEEL_DEPTH, 0, WHEEL_INNER_SIZE);
-
-	glPushMatrix();
-	glRotatef(-Theta-phi, 1, 0, 0);
-	// bench();
-	glPopMatrix();
-
-	glPopMatrix();
     }
 
     /* end benches */
