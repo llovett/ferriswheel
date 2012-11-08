@@ -345,7 +345,18 @@ void recWheel( int depth, float shrink, float netRotation ) {
 
 	    glPushMatrix();
 	    glRotatef(phi, 1, 0, 0);
-	    glTranslatef(shrink*WHEEL_DEPTH, 0, shrink*WHEEL_INNER_SIZE);
+	    GLfloat xOffset = shrink*(WHEEL_DEPTH + BENCH_WIDTH/2);
+	    xOffset -= (shrink/RECURSIVE_SHRINK)*(WHEEL_DEPTH + BENCH_WIDTH/2);
+	    glTranslatef(xOffset, 0, shrink*WHEEL_INNER_SIZE);
+
+	    /* axle to hold smaller wheel */
+	    setMaterial( &spindleMats );
+	    glPushMatrix();
+	    glTranslatef(-xOffset, 0, 0);
+	    glRotatef(90.0, 0, 1, 0);
+	    gluCylinder(p, (shrink/RECURSIVE_SHRINK)*0.75, (shrink/RECURSIVE_SHRINK)*0.75, shrink*(2*WHEEL_DEPTH + BENCH_WIDTH), 8, 8);
+	    glPopMatrix();
+	    /* end smaller-axle */
 
 	    glPushMatrix();
 	    glRotatef((depth%2 == 0? 2 : -2)*Theta, 1, 0, 0);
