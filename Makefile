@@ -1,4 +1,4 @@
-FLAGS = -I/usr/include/GL -g
+FLAGS = -I/usr/include/GL -g -O2
 LIBS = -L/usr/include -lglut -lglui -lGLU -lGL -lm
 
 APPS = ferriswheel
