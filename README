@@ -1,0 +1,12 @@
+RECURSIVE FERRIS WHEEL
+
+Luke Lovett
+
+The user controls include a parameter "recursive depth" that allows you to
+control how many "ferris wheels within the ferris wheels" there are.  The
+maximum value for this is 5, but I wouldn't recommend going that far; I think
+the lab iMacs wanted to cry at around 3. The effect is definitely a lot better
+when you also increase the "rotation speed" parameter along with the recursive
+depth.
+
+I have adhered to the Honor Code in this assignment.
